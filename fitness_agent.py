@@ -26,6 +26,17 @@ class FitnessAgent:
             return response.json()  # Use json instead of text for a more structured data
         else:
             return {"Error": response.status_code, "Message": response.text}
+        
+    def calculate_bmi(weight: float, height: float) -> float:
+        """Calculates the Body Mass Index (BMI) for a person
+
+        :param weight: The weight of the person in kg
+        :param height: The height of the person in cm
+        :return: The BMI of the person
+        """
+        height_meters = height / 100  # convert cm to meters
+        bmi = weight / (height_meters ** 2)
+        return round(bmi, 2)  # round to 2 decimal places for readability
 
     def calculate_bmr(weight: float, height: float, age: int, gender: str, equation: str = 'mifflin_st_jeor') -> float:
         """Calculates the Basal Metabolic Rate (BMR) for a person
