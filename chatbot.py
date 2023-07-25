@@ -38,7 +38,7 @@ def get_response(openai_api_key, nut_api_key, user_input, action=None):
     logger.info(memory)
     for i, message in enumerate(memory):
         if i != 0:
-            if isinstance(message, HumanMessage):
+            if message['role'] == 'user':
                 prefix = "User: "
                 background_color = "hsl(0, 0%, 40%)"  # Dark grey background
                 text_color = "hsl(0, 0%, 100%)"  # White text

@@ -2,8 +2,6 @@ import requests
 import os
 
 from agent.agents import Agent
-from langchain.chat_models import ChatOpenAI
-from abc import abstractmethod
 
 class FitnessAgent:
     def __init__(self, openai_api_key: str, nut_api_key: str):
@@ -29,7 +27,6 @@ class FitnessAgent:
         else:
             return {"Error": response.status_code, "Message": response.text}
 
-    @abstractmethod
     def calculate_bmr(weight: float, height: float, age: int, gender: str, equation: str = 'mifflin_st_jeor') -> float:
         """Calculates the Basal Metabolic Rate (BMR) for a person
 
@@ -51,7 +48,6 @@ class FitnessAgent:
             else:  # 'female'
                 return 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
 
-    @abstractmethod
     def calculate_tdee(bmr: float, activity_level: str) -> float:
         """Calculates the Total Daily Energy Expenditure (TDEE) for a person
 
@@ -69,7 +65,6 @@ class FitnessAgent:
         }
         return bmr * activity_factors.get(activity_level, 1)
 
-    @abstractmethod
     def calculate_ibw(height: float, gender: str) -> float:
         """Calculates the Ideal Body Weight (IBW)
 
