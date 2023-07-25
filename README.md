@@ -46,6 +46,7 @@ Once the chatbot is up and running, you can start asking queries. Here's an exam
 
    ```bash
    What is the TDEE of a 30-year-old man, who is 180 cm tall, weighs 80 kg, and exercises 3 times a week?
+   ```
 
 FitBot will generate a meal plan based on the information provided and also inform the person's BMI.
 
