@@ -1,48 +1,69 @@
 import gradio as gr
 import os
+import openai
+
+import logging
+
 from functools import partial
-
 from fitness_agent import FitnessAgent
+from langchain.schema import (
+    HumanMessage
+)
 
-def set_api_key(api_key):
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def set_openai_api_key(api_key):
+    openai.api_key = api_key
     os.environ["OPENAI_API_KEY"] = api_key
-    os.environ["NUT_API_KEY"] = api_key
-    return "API Key set successfully."
+    return "OpenAI API Key set successfully."
 
-def get_response(fitness_agent, api_key, user_input):
-    set_api_key(api_key)
+def set_nut_api_key(api_key):
+    os.environ["NUT_API_KEY"] = api_key
+    return "Nutrition API Key set successfully."
+
+def get_response(openai_api_key, nut_api_key, user_input, action=None):
+    set_openai_api_key(openai_api_key)
+    set_nut_api_key(nut_api_key)
+
+    fitness_agent = FitnessAgent(openai_api_key, nut_api_key)
 
     # Get raw chat response
-    response = fitness_agent.ask(user_input)
+    fitness_agent.ask(user_input)
 
-    # Format the output
+    memory = fitness_agent.agent.chat_history
+
+    # Iterate through messages in ChatMessageHistory and format the output
     updated_conversation = '<div style="background-color: hsl(30, 100%, 30%); color: white; padding: 5px; margin-bottom: 10px; text-align: center; font-size: 1.5em;">Chat History</div>'
-    for i, message in enumerate(fitness_agent.view_chat_history()):
-        prefix = "User: " if message['role'] == "user" else "FitnessAgent: "
-        background_color = "hsl(0, 0%, 40%)" if message['role'] == "user" else "hsl(0, 0%, 95%)"
-        text_color = "hsl(0, 0%, 100%)" if message['role'] == "user" else "hsl(0, 0%, 0%)"
-        updated_conversation += f'<div style="color: {text_color}; background-color: {background_color}; margin: 5px; padding: 5px;">{prefix}{message["content"]}</div>'
+    logger.info(memory)
+    for i, message in enumerate(memory):
+        if i != 0:
+            if isinstance(message, HumanMessage):
+                prefix = "User: "
+                background_color = "hsl(0, 0%, 40%)"  # Dark grey background
+                text_color = "hsl(0, 0%, 100%)"  # White text
+            else:
+                prefix = "Chatbot: "
+                background_color = "hsl(0, 0%, 95%)"  # White background
+                text_color = "hsl(0, 0%, 0%)"  # Black text
+            updated_conversation += f'<div style="color: {text_color}; background-color: {background_color}; margin: 5px; padding: 5px;">{prefix}{message["content"]}</div>'
     return updated_conversation
 
 def main():
-    api_key = os.getenv('OPENAI_API_KEY')
-    nutrition_api_key = os.getenv('NUT_API_KEY')
 
-    api_key_input = gr.components.Textbox(
+    openai_api_key = gr.components.Textbox(
         lines=1,
         label="Enter OpenAI API Key",
-        value=api_key,
         type="password",
     )
 
-    nutrition_api_key_input = gr.components.Textbox(
+    nut_api_key = gr.components.Textbox(
         lines=1,
         label="Enter Nutrition API Key",
-        value=nutrition_api_key,
         type="password",
     )
 
-    user_input = gr.components.Textbox(
+    question = gr.components.Textbox(
         lines=3,
         label="Enter your message",
     )
@@ -51,16 +72,14 @@ def main():
         label="Updated Conversation",
     )
 
-    fitness_agent = FitnessAgent(api_key, nutrition_api_key)
-
     inputs = [
-        api_key_input,
-        nutrition_api_key_input,
-        user_input,
+        openai_api_key,
+        nut_api_key,
+        question,
     ]
 
     iface = gr.Interface(
-        fn=partial(get_response, fitness_agent),
+        fn=partial(get_response),
         inputs=inputs,
         outputs=[output_history],
         title="Fitness Agent",
