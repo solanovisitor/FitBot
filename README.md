@@ -39,3 +39,19 @@ To get FitBot up and running, follow these steps:
 
     ```bash
     python run_chatbot.py
+
+## Usage
+
+Once the chatbot is up and running, you can start asking queries. Here's an example of how to interact with it:
+
+Please create a meal plan for a person 1.8m tall, weighting 84.7Kg, who does weight lifting 4 times a week and runs 5Km 2 or 3 times a week and want to go from 12.7% BF to 10% in two months. The person lives in Curitiba, Brazil. Please output the total calories, protein, carbohydrates and fat for each meal. Please inform the person's BMI as well.
+
+FitBot will generate a meal plan based on the information provided and also inform the person's BMI.
+
+## Support
+
+If you encounter any issues or have any questions about the project, feel free to open an issue on this GitHub repository.
+
+## License
+
+FitBot is open-source software licensed under the MIT license.
