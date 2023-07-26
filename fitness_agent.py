@@ -10,7 +10,7 @@ class FitnessAgent:
 
         self.agent = Agent(
             openai_api_key=self.openai_api_key,
-            functions=[self.get_nutritional_info, self.calculate_bmr, self.calculate_tdee, self.calculate_ibw]
+            functions=[self.get_nutritional_info, self.calculate_bmr, self.calculate_tdee, self.calculate_ibw, self.calculate_bmi, self.calculate_calories_to_lose_weight]
         )
 
     def get_nutritional_info(self, query: str) -> dict:
@@ -37,6 +37,16 @@ class FitnessAgent:
         height_meters = height / 100  # convert cm to meters
         bmi = weight / (height_meters ** 2)
         return round(bmi, 2)  # round to 2 decimal places for readability
+    
+    def calculate_calories_to_lose_weight(desired_weight_loss_kg: float) -> float:
+        """Calculates the number of calories required to lose a certain amount of weight
+
+        :param desired_weight_loss_kg: The amount of weight the person wants to lose, in kilograms
+        :return: The number of calories required to lose that amount of weight
+        """
+        calories_per_kg_fat = 7700  # Approximate number of calories in a kg of body fat
+        return desired_weight_loss_kg * calories_per_kg_fat
+
 
     def calculate_bmr(weight: float, height: float, age: int, gender: str, equation: str = 'mifflin_st_jeor') -> float:
         """Calculates the Basal Metabolic Rate (BMR) for a person
