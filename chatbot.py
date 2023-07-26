@@ -3,12 +3,10 @@ import os
 import openai
 
 import logging
+import threading
 
 from functools import partial
 from fitness_agent import FitnessAgent
-from langchain.schema import (
-    HumanMessage
-)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,11 +20,21 @@ def set_nut_api_key(api_key):
     os.environ["NUT_API_KEY"] = api_key
     return "Nutrition API Key set successfully."
 
+# Initialize the global fitness_agent
+fitness_agent = None
+
+# Initialize a lock for the fitness_agent
+fitness_agent_lock = threading.Lock()
+
 def get_response(openai_api_key, nut_api_key, user_input, action=None):
+    global fitness_agent
     set_openai_api_key(openai_api_key)
     set_nut_api_key(nut_api_key)
 
-    fitness_agent = FitnessAgent(openai_api_key, nut_api_key)
+    with fitness_agent_lock:
+        if fitness_agent is None:
+            # Initialize the fitness agent if it is None
+            fitness_agent = FitnessAgent(openai_api_key, nut_api_key)
 
     # Get raw chat response
     fitness_agent.ask(user_input)

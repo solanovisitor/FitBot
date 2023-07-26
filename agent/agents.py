@@ -1,8 +1,12 @@
 import json
 from typing import Optional
 from agent.parser import func_to_json
+import logging
 
 import openai
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 sys_msg = """Our Assistant is an advanced software system powered by OpenAI's GPT-4.
 
@@ -86,10 +90,13 @@ class Agent:
 
     def _call_function(self, func_name: str, args_str: str):
         args = json.loads(args_str)
+        logger.info(f"Function name: {func_name}")
+        logger.info(f"Args: {args}")
         func = self.func_mapping[func_name]
+        logger.info(f"Function object: {func}")
         res = func(**args)
         return res
-    
+
     def _final_thought_answer(self):
         thoughts = ("To answer the question I will use these step by step instructions."
                     "\n\n")

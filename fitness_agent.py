@@ -27,7 +27,7 @@ class FitnessAgent:
         else:
             return {"Error": response.status_code, "Message": response.text}
         
-    def calculate_bmi(weight: float, height: float) -> float:
+    def calculate_bmi(self, weight: float, height: float) -> float:
         """Calculates the Body Mass Index (BMI) for a person
 
         :param weight: The weight of the person in kg
@@ -38,7 +38,7 @@ class FitnessAgent:
         bmi = weight / (height_meters ** 2)
         return round(bmi, 2)  # round to 2 decimal places for readability
     
-    def calculate_calories_to_lose_weight(desired_weight_loss_kg: float) -> float:
+    def calculate_calories_to_lose_weight(self, desired_weight_loss_kg: float) -> float:
         """Calculates the number of calories required to lose a certain amount of weight
 
         :param desired_weight_loss_kg: The amount of weight the person wants to lose, in kilograms
@@ -48,12 +48,12 @@ class FitnessAgent:
         return desired_weight_loss_kg * calories_per_kg_fat
 
 
-    def calculate_bmr(weight: float, height: float, age: int, gender: str, equation: str = 'mifflin_st_jeor') -> float:
+    def calculate_bmr(self, weight: float, height: float, age: int, gender: str, equation: str = 'mifflin_st_jeor') -> float:
         """Calculates the Basal Metabolic Rate (BMR) for a person
 
-        :param weight: The weight of the person in kg
-        :param height: The height of the person in cm
-        :param age: The age of the person in years
+        :param weight: The weight of the person in kg.
+        :param height: The height of the person in cm.
+        :param age: The age of the person in years.
         :param gender: The gender of the person ('male' or 'female')
         :param equation: The equation to use for BMR calculation ('harris_benedict' or 'mifflin_st_jeor')
         :return: The BMR of the person
@@ -69,7 +69,7 @@ class FitnessAgent:
             else:  # 'female'
                 return 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
 
-    def calculate_tdee(bmr: float, activity_level: str) -> float:
+    def calculate_tdee(self, bmr: float, activity_level: str) -> float:
         """Calculates the Total Daily Energy Expenditure (TDEE) for a person
 
         :param bmr: The BMR of the person
@@ -86,7 +86,7 @@ class FitnessAgent:
         }
         return bmr * activity_factors.get(activity_level, 1)
 
-    def calculate_ibw(height: float, gender: str) -> float:
+    def calculate_ibw(self, height: float, gender: str) -> float:
         """Calculates the Ideal Body Weight (IBW)
 
         :param height: The height of the person in inches
