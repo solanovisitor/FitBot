@@ -1,6 +1,6 @@
 # FitBot: An Advanced Health-Centric Chatbot
 
-FitBot is an AI-driven chatbot that uses large language models (LLMs) such as GPT-4 by OpenAI. It seamlessly integrates with the Nutrition endpoint of API Ninjas, providing accurate nutritional data and personalized health recommendations.
+FitBot is an AI-driven chatbot that uses large language models (LLMs) such as GPT-4 by OpenAI. It seamlessly integrates with the Nutrition endpoint from API Ninjas, providing accurate nutritional data and personalized health recommendations.
 
 ## Features
 1. **Nutritional Information Retrieval:** Fetches accurate nutritional data of any given food item by leveraging the Nutrition endpoint of API Ninjas.
@@ -44,7 +44,9 @@ To get FitBot up and running, follow these steps:
 
 Once the chatbot is up and running, you can start asking queries. Here's an example of how to interact with it:
 
-Please create a meal plan for a person 1.8m tall, weighting 84.7Kg, who does weight lifting 4 times a week and runs 5Km 2 or 3 times a week and want to go from 12.7% BF to 10% in two months. The person lives in Curitiba, Brazil. Please output the total calories, protein, carbohydrates and fat for each meal. Please inform the person's BMI as well.
+   ```bash
+   What is the TDEE of a 30-year-old man, who is 180 cm tall, weighs 80 kg, and exercises 3 times a week?
+   ```
 
 FitBot will generate a meal plan based on the information provided and also inform the person's BMI.
 
