@@ -40,13 +40,16 @@ def get_response(openai_api_key, nut_api_key, user_input, action=None):
         if i != 0:
             if message['role'] == 'user':
                 prefix = "User: "
-                background_color = "hsl(0, 0%, 40%)"  # Dark grey background
-                text_color = "hsl(0, 0%, 100%)"  # White text
+                background_color = "#D3D3D3"  # Light grey background
+                text_color = "#000000"  # Black text
             else:
                 prefix = "Chatbot: "
-                background_color = "hsl(0, 0%, 95%)"  # White background
-                text_color = "hsl(0, 0%, 0%)"  # Black text
-            updated_conversation += f'<div style="color: {text_color}; background-color: {background_color}; margin: 5px; padding: 5px;">{prefix}{message["content"]}</div>'
+                background_color = "#F0F8FF"  # Alice blue background
+                text_color = "#000000"  # Black text
+
+            formatted_message = message["content"].replace('\n', '<br>')
+            
+            updated_conversation += f'<div style="color: {text_color}; background-color: {background_color}; margin: 5px; padding: 5px;">{prefix}<br>{formatted_message}</div>'
     return updated_conversation
 
 def main():
