@@ -1,5 +1,4 @@
 import requests
-import os
 
 from agent.agents import Agent
 
@@ -20,7 +19,7 @@ class FitnessAgent:
         :return: The nutritional information of the food item
         """
         api_url = 'https://api.api-ninjas.com/v1/nutrition?query={}'.format(query)
-        response = requests.get(api_url, headers={'X-Api-Key': self.nut_api_key})
+        response = requests.get(api_url, timeout=100, headers={'X-Api-Key': self.nut_api_key})
 
         if response.status_code == requests.codes.ok:
             return response.json()  # Use json instead of text for a more structured data
@@ -28,7 +27,7 @@ class FitnessAgent:
             return {"Error": response.status_code, "Message": response.text}
         
     def calculate_bmi(self, weight: float, height: float) -> float:
-        """Calculates the Body Mass Index (BMI) for a person
+        """Calculate the Body Mass Index (BMI) for a person.
 
         :param weight: The weight of the person in kg
         :param height: The height of the person in cm
