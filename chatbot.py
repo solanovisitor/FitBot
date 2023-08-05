@@ -1,104 +1,61 @@
-import gradio as gr
 import os
-import openai
-
 import logging
-import threading
-
-from functools import partial
+import gradio as gr
 from fitness_agent import FitnessAgent
+from dotenv import load_dotenv
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def set_openai_api_key(api_key):
-    openai.api_key = api_key
-    os.environ["OPENAI_API_KEY"] = api_key
-    return "OpenAI API Key set successfully."
+# load environment variables from .env.list
+load_dotenv('.env.list')
 
-def set_nut_api_key(api_key):
-    os.environ["NUT_API_KEY"] = api_key
-    return "Nutrition API Key set successfully."
+# Now you can access the variables using os.environ
+openai_api_key = os.getenv('OPENAI_API_KEY')
+nut_api_key = os.getenv('NUT_API_KEY')
 
-# Initialize the global fitness_agent
-fitness_agent = None
+# Instantiate FitnessAgent here so it remains open
+fitness_agent = FitnessAgent(openai_api_key, nut_api_key)
 
-# Initialize a lock for the fitness_agent
-fitness_agent_lock = threading.Lock()
+def get_response(message, history):
 
-def get_response(openai_api_key, nut_api_key, user_input, action=None):
-    global fitness_agent
-    set_openai_api_key(openai_api_key)
-    set_nut_api_key(nut_api_key)
+    logger.info(f'Chat history: {history}')
 
-    with fitness_agent_lock:
-        if fitness_agent is None:
-            # Initialize the fitness agent if it is None
-            fitness_agent = FitnessAgent(openai_api_key, nut_api_key)
+    formatted_chat_history = [
+        {
+            'role': 'system', 
+            'content': 'Assistant is a large language model trained by OpenAI.\n\nAssistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussion on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.\n\nAssistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.\n\nOverall, Assistant is a powerful system that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.\n'
+        }
+    ]
+
+    if history:
+        for i, chat in enumerate(history[0]):
+            formatted_chat_history.append({
+                'role': 'user' if i % 2 == 0 else 'assistant',
+                'content': chat
+            })
+
+        logger.info(formatted_chat_history)
+        fitness_agent.chat_history = formatted_chat_history
+
+        logger.info(fitness_agent.chat_history)
 
     # Get raw chat response
-    fitness_agent.ask(user_input)
+    res = fitness_agent.ask(message)
 
-    memory = fitness_agent.agent.chat_history
+    chat_response = res['choices'][0]['message']['content']
 
-    # Iterate through messages in ChatMessageHistory and format the output
-    updated_conversation = '<div style="background-color: hsl(30, 100%, 30%); color: white; padding: 5px; margin-bottom: 10px; text-align: center; font-size: 1.5em;">Chat History</div>'
-    logger.info(memory)
-    for i, message in enumerate(memory):
-        if i != 0:
-            if message['role'] == 'user':
-                prefix = "User: "
-                background_color = "#D3D3D3"  # Light grey background
-                text_color = "#000000"  # Black text
-            else:
-                prefix = "Chatbot: "
-                background_color = "#F0F8FF"  # Alice blue background
-                text_color = "#000000"  # Black text
-
-            formatted_message = message["content"].replace('\n', '<br>')
-            
-            updated_conversation += f'<div style="color: {text_color}; background-color: {background_color}; margin: 5px; padding: 5px;">{prefix}<br>{formatted_message}</div>'
-    return updated_conversation
+    return chat_response
 
 def main():
 
-    openai_api_key = gr.components.Textbox(
-        lines=1,
-        label="Enter OpenAI API Key",
-        type="password",
-    )
-
-    nut_api_key = gr.components.Textbox(
-        lines=1,
-        label="Enter Nutrition API Key",
-        type="password",
-    )
-
-    question = gr.components.Textbox(
-        lines=3,
-        label="Enter your message",
-    )
-
-    output_history = gr.outputs.HTML(
-        label="Updated Conversation",
-    )
-
-    inputs = [
-        openai_api_key,
-        nut_api_key,
-        question,
-    ]
-
-    iface = gr.Interface(
-        fn=partial(get_response),
-        inputs=inputs,
-        outputs=[output_history],
+    chat_interface = gr.ChatInterface(
+        fn=get_response,
         title="Fitness Agent",
         description="A simple chatbot using a Fitness Agent and Gradio with conversation history",
-        allow_flagging=False,
     )
 
-    iface.launch()
+    chat_interface.launch()
 
 if __name__ == "__main__":
     main()

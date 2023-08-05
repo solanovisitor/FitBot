@@ -14,7 +14,7 @@ class FitnessAgent:
         )
 
     def get_nutritional_info(self, query: str) -> dict:
-        """Fetches the nutritional information for a specific food item
+        """Fetch the nutritional information for a specific food item.
 
         :param query: The food item to get nutritional info for
         :return: The nutritional information of the food item
@@ -39,7 +39,7 @@ class FitnessAgent:
         return round(bmi, 2)  # round to 2 decimal places for readability
     
     def calculate_calories_to_lose_weight(self, desired_weight_loss_kg: float) -> float:
-        """Calculates the number of calories required to lose a certain amount of weight
+        """Calculate the number of calories required to lose a certain amount of weight.
 
         :param desired_weight_loss_kg: The amount of weight the person wants to lose, in kilograms
         :return: The number of calories required to lose that amount of weight
@@ -49,7 +49,7 @@ class FitnessAgent:
 
 
     def calculate_bmr(self, weight: float, height: float, age: int, gender: str, equation: str = 'mifflin_st_jeor') -> float:
-        """Calculates the Basal Metabolic Rate (BMR) for a person
+        """Calculate the Basal Metabolic Rate (BMR) for a person.
 
         :param weight: The weight of the person in kg.
         :param height: The height of the person in cm.
@@ -70,7 +70,7 @@ class FitnessAgent:
                 return 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
 
     def calculate_tdee(self, bmr: float, activity_level: str) -> float:
-        """Calculates the Total Daily Energy Expenditure (TDEE) for a person
+        """Calculate the Total Daily Energy Expenditure (TDEE) for a person.
 
         :param bmr: The BMR of the person
         :param activity_level: The activity level of the person
@@ -87,7 +87,7 @@ class FitnessAgent:
         return bmr * activity_factors.get(activity_level, 1)
 
     def calculate_ibw(self, height: float, gender: str) -> float:
-        """Calculates the Ideal Body Weight (IBW)
+        """Calculate the Ideal Body Weight (IBW).
 
         :param height: The height of the person in inches
         :param gender: The gender of the person ("male" or "female")
